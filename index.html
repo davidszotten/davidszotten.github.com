@@ -58,7 +58,7 @@
 
 
 
-</footer><!-- /.post-info --><p>Sometime I'd like to know how many database queries were used to generate a particular view, but can't be bothered with the full weight of the (otherwise excellent) <a href="http://pypi.python.org/pypi/django-debug-toolbar">django-debug-toolbar</a>.</p>
+</footer><!-- /.post-info --><p>Sometimes I'd like to know how many database queries were used to generate a particular view, but can't be bothered with the full weight of the (otherwise excellent) <a href="http://pypi.python.org/pypi/django-debug-toolbar">django-debug-toolbar</a>.</p>
 <p>The toolbar does a lot of logging and slows down rendering. Also, by default I want <code>'INTERCEPT_REDIRECTS': False</code>, but then I don't see the queries used in the form processing (only what was used to render the page redirected to).</p>
 <p>So instead I wrote a small piece of middleware that just outputs the query count as part of the runserver console output:</p>
 <pre>
