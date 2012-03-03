@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-        <title>davidszotten</title>
+        <title>Show number of queries in runserver output</title>
         <meta charset="utf-8" />
         <link rel="stylesheet" href="./theme/css/main.css" type="text/css" />
         <link href="./feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="davidszotten ATOM Feed" />
@@ -29,22 +29,19 @@
                 
                 
                 
-                    <li ><a href="./category/django.html">django</a></li>
+                    <li class="active"><a href="./category/django.html">django</a></li>
                 
                     <li ><a href="./category/other.html">other</a></li>
                 
                 </ul></nav>
         </header><!-- /#banner -->
                 
-
-            
-
-        
-        
-            <aside id="featured" class="body">
-                <article>
-                    <h1 class="entry-title"><a href="./show-number-of-queries-in-runserver-output.html">Show number of queries in runserver output</a></h1> 
-                    <footer class="post-info">
+<section id="content" class="body">    
+<article>
+        <header> <h1 class="entry-title"><a href=""
+        rel="bookmark" title="Permalink to Show number of queries in runserver output">Show number of queries in runserver output</a></h1>  </header>
+        <div class="entry-content">
+        <footer class="post-info">
         <abbr class="published" title="2012-03-03T00:00:00">
                 Sat 03 March 2012
         </abbr>
@@ -58,7 +55,8 @@
 
 
 
-</footer><!-- /.post-info --><p>Sometime I'd like to know how many database queries were used to generate a particular view, but can't be bothered with the full weight of the (otherwise excellent) <a href="http://pypi.python.org/pypi/django-debug-toolbar">django-debug-toolbar</a>.</p>
+</footer><!-- /.post-info -->
+        <p>Sometime I'd like to know how many database queries were used to generate a particular view, but can't be bothered with the full weight of the (otherwise excellent) <a href="http://pypi.python.org/pypi/django-debug-toolbar">django-debug-toolbar</a>.</p>
 <p>The toolbar does a lot of logging and slows down rendering. Also, by default I want <code>'INTERCEPT_REDIRECTS': False</code>, but then I don't see the queries used in the form processing (only what was used to render the page redirected to).</p>
 <p>So instead a wrote a small piece of middleware that just outputs the querycount as part of the runserver console output:</p>
 <pre>
@@ -100,59 +98,11 @@
 
         <span class="k">return</span> <span class="n">response</span>
 </pre></div>
-                </article>
-                
-            </aside><!-- /#featured -->
-            
-                <section id="content" class="body">
-                    <h1>Other articles</h1>
-                    <hr />
-                        <ol id="posts-list" class="hfeed">
-            
-        
-        
-        
+        </div><!-- /.entry-content -->
         
 
-        
-         
-            
-            <li><article class="hentry">    
-                <header>
-                        <h1><a href="./time-to-start-blogging.html" rel="bookmark" title="Permalink to Time to start blogging?">Time to start blogging?</a></h1>
-                </header>
-                
-                <div class="entry-content">
-                <footer class="post-info">
-        <abbr class="published" title="2012-03-03T00:00:00">
-                Sat 03 March 2012
-        </abbr>
-
-        
-        <address class="vcard author">
-                By <a class="url fn" href="./author/David Szotten.html">David Szotten</a>
-        </address>
-        
-<p>In <a href="./category/other.html">other</a>. </p>
-
-
-
-</footer><!-- /.post-info -->
-                <p>Have been thinking about starting to blog for a while. I think the vague plan is to write about code. Mostly notes-to-self a la "How did i get that thing to work again?", but if any of this could be useful to others, all the better. We'll see where ...</p>
-                <a class="readmore" href="./time-to-start-blogging.html">read more</a>
-                
-                </div><!-- /.entry-content -->
-            </article></li>
-        
-        
-            
-        
-
-    
-    </ol><!-- /#posts-list -->
-    </section><!-- /#content -->
-
-
+</article>
+</section>
 
         <section id="extras" class="body">
         
