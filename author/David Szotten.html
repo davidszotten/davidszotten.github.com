@@ -60,7 +60,7 @@
 
 </footer><!-- /.post-info --><p>Sometime I'd like to know how many database queries were used to generate a particular view, but can't be bothered with the full weight of the (otherwise excellent) <a href="http://pypi.python.org/pypi/django-debug-toolbar">django-debug-toolbar</a>.</p>
 <p>The toolbar does a lot of logging and slows down rendering. Also, by default I want <code>'INTERCEPT_REDIRECTS': False</code>, but then I don't see the queries used in the form processing (only what was used to render the page redirected to).</p>
-<p>So instead a wrote a small piece of middleware that just outputs the querycount as part of the runserver console output:</p>
+<p>So instead I wrote a small piece of middleware that just outputs the query count as part of the runserver console output:</p>
 <pre>
     # queries: 4   [03/Mar/2012 10:20:37] "GET /admin/ HTTP/1.0" 200 23831
     <span class="ow"># queries: 114</span> [03/Mar/2012 10:20:51] "GET /oops/ HTTP/1.0" 200 57321
@@ -138,7 +138,7 @@
 
 
 </footer><!-- /.post-info -->
-                <p>Have been thinking about starting to blog for a while. I think the vague plan is to write about code. Mostly notes-to-self a la "How did i get that thing to work again?", but if any of this could be useful to others, all the better. We'll see where ...</p>
+                <p>Have been thinking about starting to blog for a while. I think the vague plan is to write about code. Mostly notes-to-self a la "How did I get that thing to work again?", but if any of this could be useful to others, all the better. We'll see where ...</p>
                 <a class="readmore" href=".././time-to-start-blogging.html">read more</a>
                 
                 </div><!-- /.entry-content -->
