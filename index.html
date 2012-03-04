@@ -43,8 +43,54 @@
         
             <aside id="featured" class="body">
                 <article>
-                    <h1 class="entry-title"><a href="./show-number-of-queries-in-runserver-output.html">Show number of queries in runserver output</a></h1> 
+                    <h1 class="entry-title"><a href="./remove-tweet-from-os-x-context-menu.html">Remove "tweet" from os x context menu</a></h1> 
                     <footer class="post-info">
+        <abbr class="published" title="2012-03-04T00:00:00">
+                Sun 04 March 2012
+        </abbr>
+
+        
+        <address class="vcard author">
+                By <a class="url fn" href="./author/David Szotten.html">David Szotten</a>
+        </address>
+        
+<p>In <a href="./category/other.html">other</a>. </p>
+
+
+
+</footer><!-- /.post-info --><p>I rarely (read: never) want to tweet when I right click to bring up a context menu. Actually, most of the time, I'm just looking for "Inspect Element" in Chrome. I was happily surprised to find I could remove the option entirely:</p>
+<ol>
+<li>Open System Preferences</li>
+<li>Choose "Keyboard"</li>
+<li>Choose the "Keyboard Shortcuts" tab</li>
+<li>Find "Services" in the menu</li>
+<li>Untick "Tweet" (I also found a few others to untick)</li>
+<li>Profit</li>
+</ol><p>There are <a href="./remove-tweet-from-os-x-context-menu.html#disqus_thread">comments</a>.</p>
+                </article>
+                
+            </aside><!-- /#featured -->
+            
+                <section id="content" class="body">
+                    <h1>Other articles</h1>
+                    <hr />
+                        <ol id="posts-list" class="hfeed">
+            
+        
+        
+        
+        
+
+        
+         
+            
+            <li><article class="hentry">    
+                <header>
+                        <h1><a href="./show-number-of-queries-in-runserver-output.html" rel="bookmark" title="Permalink to Show number of queries in runserver output">Show number of queries in runserver output</a></h1>
+                </header>
+                
+                <div class="entry-content">
+                <footer class="post-info">
         <abbr class="published" title="2012-03-03T00:00:00">
                 Sat 03 March 2012
         </abbr>
@@ -58,58 +104,13 @@
 
 
 
-</footer><!-- /.post-info --><p>Sometimes I'd like to know how many database queries were used to generate a particular view, but can't be bothered with the full weight of the (otherwise excellent) <a href="http://pypi.python.org/pypi/django-debug-toolbar">django-debug-toolbar</a>.</p>
-<p>The toolbar does a lot of logging and slows down rendering. Also, by default I want <code>'INTERCEPT_REDIRECTS': False</code>, but then I don't see the queries used in the form processing (only what was used to render the page redirected to).</p>
-<p>So instead I wrote a small piece of middleware that just outputs the query count as part of the runserver console output:</p>
-<pre>
-    # queries: 4   [03/Mar/2012 10:20:37] "GET /admin/ HTTP/1.0" 200 23831
-    <span class="ow"># queries: 114</span> [03/Mar/2012 10:20:51] "GET /oops/ HTTP/1.0" 200 57321
-    <span class="s"># queries: 14</span>  [03/Mar/2012 10:21:07] "GET /admin/members/ HTTP/1.0" 200 37601
-</pre>
-
-<p>Code:</p>
-<div class="codehilite"><pre><span class="nb">import</span> <span class="n">sys</span>
-<span class="n">from</span> <span class="n">django</span><span class="o">.</span><span class="n">conf</span> <span class="nb">import</span> <span class="n">settings</span>
-<span class="n">from</span> <span class="n">django</span><span class="o">.</span><span class="n">db</span> <span class="nb">import</span> <span class="n">connection</span>
-<span class="n">from</span> <span class="n">django</span><span class="o">.</span><span class="n">utils</span> <span class="nb">import</span> <span class="n">termcolors</span>
-
-<span class="n">class</span> <span class="n">QueryPrintingMiddleware</span><span class="p">(</span><span class="n">object</span><span class="p">):</span>
-    <span class="n">start</span> <span class="o">=</span> <span class="n">None</span>
-
-    <span class="n">def</span> <span class="n">process_request</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">DEBUG:</span>
-            <span class="n">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="n">len</span><span class="p">(</span><span class="n">connection</span><span class="o">.</span><span class="n">queries</span><span class="p">)</span>
-
-    <span class="n">def</span> <span class="n">process_response</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">DEBUG</span> <span class="ow">and</span> <span class="s">&#39;runserver&#39;</span> <span class="n">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="ow">and</span> <span class="n">self</span><span class="o">.</span><span class="n">start</span> <span class="n">is</span> <span class="ow">not</span> <span class="n">None:</span>
-            <span class="n">red</span> <span class="o">=</span> <span class="n">termcolors</span><span class="o">.</span><span class="n">make_style</span><span class="p">(</span><span class="n">opts</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;bold&#39;</span><span class="p">,),</span> <span class="n">fg</span><span class="o">=</span><span class="s">&#39;red&#39;</span><span class="p">)</span>
-            <span class="n">yellow</span> <span class="o">=</span> <span class="n">termcolors</span><span class="o">.</span><span class="n">make_style</span><span class="p">(</span><span class="n">opts</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;bold&#39;</span><span class="p">,),</span> <span class="n">fg</span><span class="o">=</span><span class="s">&#39;yellow&#39;</span><span class="p">)</span>
-
-            <span class="n">count</span> <span class="o">=</span> <span class="n">len</span><span class="p">(</span><span class="n">connection</span><span class="o">.</span><span class="n">queries</span><span class="p">)</span> <span class="o">-</span> <span class="n">self</span><span class="o">.</span><span class="n">start</span>
-            <span class="n">output</span> <span class="o">=</span> <span class="s">&#39;# queries: %s&#39;</span> <span class="nv">%</span> <span class="nv">count</span>
-            <span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
-
-            <span class="c1"># add some colour</span>
-            <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
-                <span class="n">output</span> <span class="o">=</span> <span class="n">red</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
-            <span class="n">elif</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
-                <span class="n">output</span> <span class="o">=</span> <span class="n">yellow</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
-
-            <span class="c1"># runserver just prints its output to sys.stderr, so follow suite</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="nb">write</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">response</span>
-</pre></div><p>There are <a href="./show-number-of-queries-in-runserver-output.html#disqus_thread">comments</a>.</p>
-                </article>
-                
-            </aside><!-- /#featured -->
-            
-                <section id="content" class="body">
-                    <h1>Other articles</h1>
-                    <hr />
-                        <ol id="posts-list" class="hfeed">
-            
-        
+</footer><!-- /.post-info -->
+                <p>Sometimes I'd like to know how many database queries were used to generate a particular view, but can't be bothered with the full weight of the (otherwise excellent) <a href="http://pypi.python.org/pypi/django-debug-toolbar">django-debug-toolbar</a>.</p>
+<p>The toolbar does a lot of logging and slows down rendering. Also, by default I want <code>'INTERCEPT_REDIRECTS': False</code>, but ...</p>
+                <a class="readmore" href="./show-number-of-queries-in-runserver-output.html">read more</a>
+                <p>There are <a href="./show-number-of-queries-in-runserver-output.html#disqus_thread">comments</a>.</p>
+                </div><!-- /.entry-content -->
+            </article></li>
         
         
         
