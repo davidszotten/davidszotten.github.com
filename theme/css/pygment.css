@@ -60,3 +60,15 @@ pre .vg { color: #f8f8f2 } /* Name.Variable.Global */
 pre .vi { color: #f8f8f2 } /* Name.Variable.Instance */
 pre .il { color: #ae81ff } /* Literal.Number.Integer.Long */
 
+/* may as well tack on some customisations here for now
+ * TODO: move somewhere better
+ * */
+code {
+    font-size: 110%;
+    /* from github */
+    margin: 0 2px;
+    padding: 0 5px;
+    white-space: nowrap;
+    border: 1px solid #EAEAEA;
+    background-color: #F8F8F8;
+}

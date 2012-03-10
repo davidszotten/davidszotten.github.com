@@ -43,8 +43,106 @@
         
             <aside id="featured" class="body">
                 <article>
-                    <h1 class="entry-title"><a href=".././remove-tweet-from-os-x-context-menu.html">Remove "tweet" from os x context menu</a></h1> 
+                    <h1 class="entry-title"><a href=".././git-case-gotcha-on-os-x.html">Git case gotcha on os x</a></h1> 
                     <footer class="post-info">
+        <abbr class="published" title="2012-03-10T00:00:00">
+                Sat 10 March 2012
+        </abbr>
+
+        
+        <address class="vcard author">
+                By <a class="url fn" href=".././author/David Szotten.html">David Szotten</a>
+        </address>
+        
+<p>In <a href=".././category/other.html">other</a>. </p>
+
+
+
+</footer><!-- /.post-info --><p>Found myself caught by a gotcha using git on os x today. The issue is the way os x (hfs+) handles letter case in file names. File names are case insensitive, which means that <code>File</code> and <code>file</code> are considered to be the same file.</p>
+<p>To see this in action, create a new repo, touch a file named <code>File</code>, add it and commit. Then try renaming it to <code>file</code>, and check <code>git status</code>.</p>
+<div class="codehilite"><pre><span class="nv">$</span> <span class="nv">git</span> <span class="n">init</span>         <span class="c1"># create a new repo</span>
+<span class="nv">$</span> <span class="nv">touch</span> <span class="n">File</span>       <span class="c1"># create a file</span>
+<span class="nv">$</span> <span class="nv">git</span> <span class="n">add</span> <span class="n">File</span>     <span class="c1"># add it to the index</span>
+</pre></div>
+
+
+<p>Current status:</p>
+<div class="codehilite"><pre><span class="nv">$</span> <span class="nv">git</span> <span class="n">status</span>
+<span class="c1"># On branch master</span>
+<span class="c1">#</span>
+<span class="c1"># Initial commit</span>
+<span class="c1">#</span>
+<span class="c1"># Changes to be committed:</span>
+<span class="c1">#   (use &quot;git rm --cached &lt;file&gt;...&quot; to unstage)</span>
+<span class="c1">#</span>
+<span class="c1">#       new file:   File</span>
+<span class="c1">#</span>
+<span class="nv">$</span> <span class="nv">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s">&quot;add File&quot;</span>
+<span class="p">[</span><span class="n">master</span> <span class="p">(</span><span class="n">root</span><span class="o">-</span><span class="n">commit</span><span class="p">)</span> <span class="mi">2</span><span class="n">c249b7</span><span class="p">]</span> <span class="n">add</span> <span class="n">File</span>
+<span class="mi">0</span> <span class="n">files</span> <span class="n">changed</span><span class="p">,</span> <span class="mi">0</span> <span class="n">insertions</span><span class="p">(</span><span class="o">+</span><span class="p">),</span> <span class="mi">0</span> <span class="n">deletions</span><span class="p">(</span><span class="o">-</span><span class="p">)</span>
+<span class="n">create</span> <span class="n">mode</span> <span class="mi">100644</span> <span class="n">File</span>
+</pre></div>
+
+
+<p>Now, we try to rename <code>File</code> to <code>file</code>:</p>
+<div class="codehilite"><pre><span class="nv">$</span> <span class="nv">ls</span>
+<span class="n">File</span>
+<span class="nv">$</span> <span class="nv">mv</span> <span class="n">File</span> <span class="n">file</span>
+<span class="nv">$</span> <span class="nv">ls</span>
+<span class="n">file</span>
+<span class="nv">$</span> <span class="nv">git</span> <span class="n">status</span>
+<span class="c1"># On branch master</span>
+<span class="n">nothing</span> <span class="n">to</span> <span class="n">commit</span> <span class="p">(</span><span class="n">working</span> <span class="n">directory</span> <span class="n">clean</span><span class="p">)</span>
+</pre></div>
+
+
+<p>Huh? Turns out, git doesn't notice the change. Ok, let's try moving back, and explicitly telling git what we want:</p>
+<div class="codehilite"><pre><span class="nv">$</span> <span class="nv">mv</span> <span class="n">file</span> <span class="n">File</span>
+<span class="nv">$</span> <span class="nv">git</span> <span class="n">mv</span> <span class="n">File</span> <span class="n">file</span>
+<span class="n">fatal:</span> <span class="n">destination</span> <span class="nb">exists</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="n">File</span><span class="p">,</span> <span class="n">destination</span><span class="o">=</span><span class="n">file</span>
+</pre></div>
+
+
+<p>No joy. In fact, the best i could come up with is the rather awkward:</p>
+<div class="codehilite"><pre><span class="nv">$</span> <span class="nv">git</span> <span class="n">mv</span> <span class="n">File</span> <span class="n">File</span><span class="o">.</span><span class="n">tmp</span>
+<span class="nv">$</span> <span class="nv">git</span> <span class="n">mv</span> <span class="n">File</span><span class="o">.</span><span class="n">tmp</span> <span class="n">file</span>
+<span class="nv">$</span> <span class="nv">ls</span>
+<span class="n">file</span>
+<span class="nv">$</span> <span class="nv">git</span> <span class="n">status</span>
+<span class="c1"># On branch master</span>
+<span class="c1"># Changes to be committed:</span>
+<span class="c1">#   (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)</span>
+<span class="c1">#</span>
+<span class="c1">#       renamed:    File -&gt; file</span>
+<span class="c1">#</span>
+</pre></div>
+
+
+<p>Finally, git's doing what I want. A slightly silly dance required, but at least it works. Better ideas on how to do this are most welcome.</p><p>There are <a href=".././git-case-gotcha-on-os-x.html#disqus_thread">comments</a>.</p>
+                </article>
+                
+            </aside><!-- /#featured -->
+            
+                <section id="content" class="body">
+                    <h1>Other articles</h1>
+                    <hr />
+                        <ol id="posts-list" class="hfeed">
+            
+        
+        
+        
+        
+
+        
+         
+            
+            <li><article class="hentry">    
+                <header>
+                        <h1><a href=".././remove-tweet-from-os-x-context-menu.html" rel="bookmark" title="Permalink to Remove "tweet" from os x context menu">Remove "tweet" from os x context menu</a></h1>
+                </header>
+                
+                <div class="entry-content">
+                <footer class="post-info">
         <abbr class="published" title="2012-03-04T00:00:00">
                 Sun 04 March 2012
         </abbr>
@@ -58,25 +156,16 @@
 
 
 
-</footer><!-- /.post-info --><p>I rarely (read: never) want to tweet when I right click to bring up a context menu. Actually, most of the time, I'm just looking for "Inspect Element" in Chrome. I was happily surprised to find I could remove the option entirely:</p>
+</footer><!-- /.post-info -->
+                <p>I rarely (read: never) want to tweet when I right click to bring up a context menu. Actually, most of the time, I'm just looking for "Inspect Element" in Chrome. I was happily surprised to find I could remove the option entirely:</p>
 <ol>
 <li>Open System Preferences</li>
 <li>Choose "Keyboard"</li>
-<li>Choose the "Keyboard Shortcuts" tab</li>
-<li>Find "Services" in the menu</li>
-<li>Untick "Tweet" (I also found a few others to untick)</li>
-<li>Profit</li>
-</ol><p>There are <a href=".././remove-tweet-from-os-x-context-menu.html#disqus_thread">comments</a>.</p>
-                </article>
-                
-            </aside><!-- /#featured -->
-            
-                <section id="content" class="body">
-                    <h1>Other articles</h1>
-                    <hr />
-                        <ol id="posts-list" class="hfeed">
-            
-        
+<li>Choose the ...</li></ol>
+                <a class="readmore" href=".././remove-tweet-from-os-x-context-menu.html">read more</a>
+                <p>There are <a href=".././remove-tweet-from-os-x-context-menu.html#disqus_thread">comments</a>.</p>
+                </div><!-- /.entry-content -->
+            </article></li>
         
         
         
