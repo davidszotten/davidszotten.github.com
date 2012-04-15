@@ -21,20 +21,23 @@
 
 <body id="index" class="home">
 
-        <header id="banner" class="body">
-                <h1><a href="../.">davidszotten </a></h1>
-                <nav><ul>
-                
-                
-                
-                
-                
-                    <li class="active"><a href=".././category/django.html">django</a></li>
-                
-                    <li ><a href=".././category/other.html">other</a></li>
-                
-                </ul></nav>
-        </header><!-- /#banner -->
+    <header id="banner" class="body">
+            <h1><a href="../.">davidszotten </a></h1>
+    </header><!-- /#banner -->
+    <div id="container">
+        <nav><ul>
+        
+            <li><a href=".././about.html">about</a></li>
+
+        
+        
+        
+        
+        
+            <li ><a href=".././category/blog.html">blog</a></li>
+        
+        </ul></nav>
+
                 
 
             
@@ -45,20 +48,16 @@
                 <article>
                     <h1 class="entry-title"><a href=".././introspecting-django-urls-for-fun-and-profit.html">Introspecting django urls for fun and profit</a></h1> 
                     <footer class="post-info">
+<p>
         <abbr class="published" title="2012-04-14T00:00:00">
                 Sat 14 April 2012
         </abbr>
 
-        
-        <address class="vcard author">
-                By <a class="url fn" href=".././author/David Szotten.html">David Szotten</a>
-        </address>
-        
-<p>In <a href=".././category/django.html">django</a>. </p>
+</p>
+<p>tags: <a href=".././tag/django.html">django</a> <a href=".././tag/python.html">python</a> </p>
 
 
-
-</footer><!-- /.post-info --><p>On of the projects I work on has a fairly large and old code base, and is unfortunately somewhat lacking in the test sute department. We are working to improve this, but in the medium term we are stuck with a fair amount of manual testing.</p>
+</footer><!-- /.post-info --><p>One of the projects I work on has a fairly large and old code base, and is unfortunately somewhat lacking in the test suite department. We are working to improve this, but in the medium term we are stuck with a fair amount of manual testing.</p>
 <p>As part of some recent development, a lot of the urls were getting a new parameter, and during some (manual) testing i discovered a view that hadn't had its signature updated to match the new url pattern. This got me thinking that there ought to be some way to automatically look for this. Ideally such bugs shuold be covered in other automatic tests but maybe some code in(tro/)spection could help with some of these issues in the short to intermediate term.</p>
 <p>Definitely worth a couple of hours to see what we can do.</p>
 <h1>Gameplan</h1>
@@ -207,118 +206,7 @@
 
 
 <h3>Profilt?</h3>
-<p>Putting this all together in a django management command, we get</p>
-<div class="codehilite"><pre><span class="sd">&quot;&quot;&quot; django management command to find url patterns with mismatching</span>
-<span class="sd">    views. feel free to use, but at your own risk &quot;&quot;&quot;</span>
-
-<span class="kn">import</span> <span class="nn">collections</span>
-<span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">django.core.management.base</span> <span class="kn">import</span> <span class="n">BaseCommand</span>
-<span class="kn">import</span> <span class="nn">urls</span>
-
-<span class="k">def</span> <span class="nf">guess_wrapper</span><span class="p">(</span><span class="n">cells</span><span class="p">):</span>
-    <span class="c"># look through the funciton closure for cells that look</span>
-    <span class="c"># like wrapped functions. for multuple functions,</span>
-    <span class="c"># attempt to guess which is the more likely candidate</span>
-
-    <span class="c"># we add points for</span>
-    <span class="c"># * non-lambda</span>
-    <span class="c"># * &#39;request&#39; in arg list</span>
-
-    <span class="n">functions</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">cells</span><span class="p">:</span>
-        <span class="n">contents</span> <span class="o">=</span> <span class="n">cell</span><span class="o">.</span><span class="n">cell_contents</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="n">contents</span><span class="p">):</span>
-            <span class="k">continue</span>
-
-        <span class="n">score</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">if</span> <span class="n">contents</span><span class="o">.</span><span class="n">__name__</span> <span class="o">!=</span> <span class="s">&#39;&lt;lambda&gt;&#39;</span><span class="p">:</span>
-            <span class="n">score</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">if</span> <span class="s">&#39;request&#39;</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getargspec</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span><span class="o">.</span><span class="n">args</span><span class="p">:</span>
-            <span class="n">score</span> <span class="o">+=</span> <span class="mi">1</span>
-
-        <span class="n">functions</span><span class="p">[</span><span class="n">score</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">score</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">functions</span><span class="o">.</span><span class="n">keys</span><span class="p">())):</span>
-        <span class="k">return</span> <span class="n">functions</span><span class="p">[</span><span class="n">score</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">return</span> <span class="bp">None</span>
-
-<span class="k">def</span> <span class="nf">unwrap_and_compare</span><span class="p">(</span><span class="n">kwargs_provided</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">description</span><span class="p">):</span>
-    <span class="c"># if the callback is decorated, unwrap to find the</span>
-    <span class="c"># original view</span>
-
-    <span class="c"># if we have a decorated function, the &quot;wrapped&quot;</span>
-    <span class="c"># function should b in the closure of the decorator</span>
-    <span class="c"># so we look for functions in the closure, guessing</span>
-    <span class="c"># if neccessary.</span>
-
-    <span class="k">if</span> <span class="n">callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="k">while</span> <span class="n">callback</span><span class="o">.</span><span class="n">func_closure</span><span class="p">:</span>
-            <span class="n">compare</span><span class="p">(</span><span class="n">kwargs_provided</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
-            <span class="n">cells</span> <span class="o">=</span> <span class="n">callback</span><span class="o">.</span><span class="n">func_closure</span>
-            <span class="n">guess</span> <span class="o">=</span> <span class="n">guess_wrapper</span><span class="p">(</span><span class="n">cells</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">guess</span><span class="p">:</span>
-                <span class="n">callback</span> <span class="o">=</span> <span class="n">guess</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c"># nothing in the closure was a function, so give up</span>
-                <span class="k">break</span>
-        <span class="n">compare</span><span class="p">(</span><span class="n">kwargs_provided</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">compare</span><span class="p">(</span><span class="n">kwargs_provided</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">description</span><span class="p">):</span>
-    <span class="n">spec</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getargspec</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
-
-    <span class="n">args</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">args</span>
-    <span class="n">defaults</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">defaults</span>
-    <span class="k">if</span> <span class="n">defaults</span><span class="p">:</span>
-        <span class="n">required_args</span> <span class="o">=</span> <span class="n">args</span><span class="p">[:</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">defaults</span><span class="p">)]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">required_args</span> <span class="o">=</span> <span class="n">args</span>
-
-    <span class="n">missing_kwargs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">required_args</span><span class="p">)</span> <span class="o">-</span> <span class="n">kwargs_provided</span>
-    <span class="k">if</span> <span class="n">missing_kwargs</span><span class="p">:</span>
-        <span class="k">print</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">: view requires kwargs </span><span class="si">%s</span><span class="s"> not in the url kwargs&quot;</span> <span class="o">%</span> <span class="p">(</span>
-            <span class="n">description</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">missing_kwargs</span><span class="p">))</span>
-
-    <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">keywords</span><span class="p">:</span>
-        <span class="c"># signature contains **kwargs, so can&#39;t do second check</span>
-        <span class="k">return</span>
-
-    <span class="n">extra_kwargs</span> <span class="o">=</span> <span class="n">kwargs_provided</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">extra_kwargs</span><span class="p">:</span>
-        <span class="k">print</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">: url provides kwargs </span><span class="si">%s</span><span class="s"> not in the view signature&quot;</span> <span class="o">%</span> <span class="p">(</span>
-            <span class="n">description</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">extra_kwargs</span><span class="p">))</span>
-
-<span class="k">def</span> <span class="nf">check_resolver</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
-    <span class="n">effective_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">entry</span><span class="o">.</span><span class="n">regex</span><span class="o">.</span><span class="n">pattern</span><span class="p">)</span>
-
-    <span class="c"># skip the admin</span>
-    <span class="k">if</span> <span class="n">effective_regex</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;^admin/&#39;</span><span class="p">):</span>
-        <span class="k">return</span>
-
-    <span class="n">description</span> <span class="o">=</span> <span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="s">&#39;name&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">effective_regex</span><span class="o">.</span><span class="n">pattern</span><span class="p">)</span>
-
-    <span class="n">kwargs_provided</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="s">&#39;request&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="s">&#39;default_args&#39;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-    <span class="n">kwargs_provided</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">effective_regex</span><span class="o">.</span><span class="n">groupindex</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-
-    <span class="n">unwrap_and_compare</span><span class="p">(</span><span class="n">kwargs_provided</span><span class="p">,</span> <span class="n">entry</span><span class="o">.</span><span class="n">callback</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">show_urls</span><span class="p">(</span><span class="n">urllist</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">urllist</span><span class="p">:</span>
-        <span class="n">check_resolver</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="n">prefix</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="s">&#39;url_patterns&#39;</span><span class="p">):</span>
-            <span class="n">show_urls</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">url_patterns</span><span class="p">,</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">entry</span><span class="o">.</span><span class="n">regex</span><span class="o">.</span><span class="n">pattern</span><span class="p">)</span>
-
-<span class="k">class</span> <span class="nc">Command</span><span class="p">(</span><span class="n">BaseCommand</span><span class="p">):</span>
-    <span class="n">help</span> <span class="o">=</span> <span class="s">&quot;Inspect urlpatterns and their views looking for mismatched arguments&quot;</span>
-
-    <span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">labels</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
-
-        <span class="n">show_urls</span><span class="p">(</span><span class="n">urls</span><span class="o">.</span><span class="n">urlpatterns</span><span class="p">)</span>
-</pre></div>
-
-
+<p>Putting this all together in a django management command, we get a nice tool to help with finding bugs, especially around refactoring a django probject.  The complete thing may be found on github, as <a href="https://github.com/davidszotten/django-urls-introspect">django-urls-introspect</a></p>
 <p>Using the command I was able to find a few issues and get them sorted.</p>
 <div class="codehilite"><pre><span class="o">./</span><span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">check_urls</span>
 <span class="n">edit</span><span class="o">-</span><span class="n">members:</span> <span class="n">url</span> <span class="n">provides</span> <span class="n">kwargs</span> <span class="p">[</span><span class="s">&#39;member_id&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="n">in</span> <span class="n">the</span> <span class="n">view</span> <span class="n">sinature</span>
@@ -350,17 +238,13 @@
                 
                 <div class="entry-content">
                 <footer class="post-info">
+<p>
         <abbr class="published" title="2012-03-03T00:00:00">
                 Sat 03 March 2012
         </abbr>
 
-        
-        <address class="vcard author">
-                By <a class="url fn" href=".././author/David Szotten.html">David Szotten</a>
-        </address>
-        
-<p>In <a href=".././category/django.html">django</a>. </p>
-
+</p>
+<p>tags: <a href=".././tag/django.html">django</a> <a href=".././tag/python.html">python</a> </p>
 
 
 </footer><!-- /.post-info -->
@@ -381,32 +265,8 @@
 
 
 
-        <section id="extras" class="body">
-        
-        
-                <div class="social">
-                        <h2>social</h2>
-                        <ul>
-                            <li><a href=".././feeds/all.atom.xml" rel="alternate">atom feed</a></li>
-                            
-
-                        
-                            <li><a href="http://twitter.com/szotten">twitter</a></li>
-                        
-                            <li><a href="https://github.com/davidszotten">github</a></li>
-                        
-                        </ul>
-                </div><!-- /.social -->
-        
-        </section><!-- /#extras -->
-
-        <footer id="contentinfo" class="body">
-                <address id="about" class="vcard body">
-                Proudly powered by <a href="http://alexis.notmyidea.org/pelican/">pelican</a>, which takes great advantages of <a href="http://python.org">python</a>.
-                </address><!-- /#about -->
-
-                <p>The theme is by <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a>, thanks!</p>
-        </footer><!-- /#contentinfo -->
+    </div>
+    
 
 
     <script type="text/javascript">

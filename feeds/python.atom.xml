@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>davidszotten</title><link href="http://davidszotten.github.com" rel="alternate"></link><link href="http://davidszotten.github.com/feeds/all.atom.xml" rel="self"></link><id>http://davidszotten.github.com</id><updated>2012-04-15T00:00:00+01:00</updated><entry><title>Automating save-build-refresh on os x</title><link href="http://davidszotten.github.com/automating-save-build-refresh-on-os-x.html" rel="alternate"></link><updated>2012-04-15T00:00:00+01:00</updated><author><name>David Szotten</name></author><id>http://davidszotten.github.com/automating-save-build-refresh-on-os-x.html</id><summary type="html">&lt;p&gt;This blog is powered by &lt;a href="https://github.com/ametaireau/pelican/"&gt;Pelican&lt;/a&gt;. When I first started out, I was composing in vim, switching over to a terminal to build, and finally to my browser to preview the result. Clearly this becomes tedious pretty quickly.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>davidszotten</title><link href="http://davidszotten.github.com" rel="alternate"></link><link href="http://davidszotten.github.com/feeds/python.atom.xml" rel="self"></link><id>http://davidszotten.github.com</id><updated>2012-04-15T00:00:00+01:00</updated><entry><title>Automating save-build-refresh on os x</title><link href="http://davidszotten.github.com/automating-save-build-refresh-on-os-x.html" rel="alternate"></link><updated>2012-04-15T00:00:00+01:00</updated><author><name>David Szotten</name></author><id>http://davidszotten.github.com/automating-save-build-refresh-on-os-x.html</id><summary type="html">&lt;p&gt;This blog is powered by &lt;a href="https://github.com/ametaireau/pelican/"&gt;Pelican&lt;/a&gt;. When I first started out, I was composing in vim, switching over to a terminal to build, and finally to my browser to preview the result. Clearly this becomes tedious pretty quickly.&lt;/p&gt;
 &lt;p&gt;I was already familiar with tools to watch folders for changes and trigger actions, and I recently discovered that I could use a bit of applescript to refresh my browser, saving precious seconds and make the workflow feel more natural.&lt;/p&gt;
 &lt;p&gt;I already have a makefile for the actual build step. It's a fairly trivial command but this file saves me rembmering it:&lt;/p&gt;
 &lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$&lt;/span&gt; &lt;span class="nv"&gt;cat&lt;/span&gt; &lt;span class="n"&gt;Makefile&lt;/span&gt;
@@ -221,75 +221,7 @@
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Is this a stupid idea? Do let me know. Any other thoughts/comments also welome.&lt;/p&gt;</summary><category term="django"></category><category term="python"></category></entry><entry><title>Git case gotcha on os x</title><link href="http://davidszotten.github.com/git-case-gotcha-on-os-x.html" rel="alternate"></link><updated>2012-03-10T00:00:00+00:00</updated><author><name>David Szotten</name></author><id>http://davidszotten.github.com/git-case-gotcha-on-os-x.html</id><summary type="html">&lt;p&gt;Found myself caught by a gotcha using git on os x today. The issue is the way os x (hfs+) handles letter case in file names. File names are case insensitive, which means that &lt;code&gt;File&lt;/code&gt; and &lt;code&gt;file&lt;/code&gt; are considered to be the same file.&lt;/p&gt;
-&lt;p&gt;To see this in action, create a new repo, touch a file named &lt;code&gt;File&lt;/code&gt;, add it and commit. Then try renaming it to &lt;code&gt;file&lt;/code&gt;, and check &lt;code&gt;git status&lt;/code&gt;.&lt;/p&gt;
-&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$&lt;/span&gt; &lt;span class="nv"&gt;git&lt;/span&gt; &lt;span class="n"&gt;init&lt;/span&gt;         &lt;span class="c1"&gt;# create a new repo&lt;/span&gt;
-&lt;span class="nv"&gt;$&lt;/span&gt; &lt;span class="nv"&gt;touch&lt;/span&gt; &lt;span class="n"&gt;File&lt;/span&gt;       &lt;span class="c1"&gt;# create a file&lt;/span&gt;
-&lt;span class="nv"&gt;$&lt;/span&gt; &lt;span class="nv"&gt;git&lt;/span&gt; &lt;span class="n"&gt;add&lt;/span&gt; &lt;span class="n"&gt;File&lt;/span&gt;     &lt;span class="c1"&gt;# add it to the index&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Current status:&lt;/p&gt;
-&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$&lt;/span&gt; &lt;span class="nv"&gt;git&lt;/span&gt; &lt;span class="n"&gt;status&lt;/span&gt;
-&lt;span class="c1"&gt;# On branch master&lt;/span&gt;
-&lt;span class="c1"&gt;#&lt;/span&gt;
-&lt;span class="c1"&gt;# Initial commit&lt;/span&gt;
-&lt;span class="c1"&gt;#&lt;/span&gt;
-&lt;span class="c1"&gt;# Changes to be committed:&lt;/span&gt;
-&lt;span class="c1"&gt;#   (use &amp;quot;git rm --cached &amp;lt;file&amp;gt;...&amp;quot; to unstage)&lt;/span&gt;
-&lt;span class="c1"&gt;#&lt;/span&gt;
-&lt;span class="c1"&gt;#       new file:   File&lt;/span&gt;
-&lt;span class="c1"&gt;#&lt;/span&gt;
-&lt;span class="nv"&gt;$&lt;/span&gt; &lt;span class="nv"&gt;git&lt;/span&gt; &lt;span class="n"&gt;commit&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;m&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;add File&amp;quot;&lt;/span&gt;
-&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;master&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;root&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;commit&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="n"&gt;c249b7&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="n"&gt;add&lt;/span&gt; &lt;span class="n"&gt;File&lt;/span&gt;
-&lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="n"&gt;files&lt;/span&gt; &lt;span class="n"&gt;changed&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="n"&gt;insertions&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="n"&gt;deletions&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;create&lt;/span&gt; &lt;span class="n"&gt;mode&lt;/span&gt; &lt;span class="mi"&gt;100644&lt;/span&gt; &lt;span class="n"&gt;File&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Now, we try to rename &lt;code&gt;File&lt;/code&gt; to &lt;code&gt;file&lt;/code&gt;:&lt;/p&gt;
-&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$&lt;/span&gt; &lt;span class="nv"&gt;ls&lt;/span&gt;
-&lt;span class="n"&gt;File&lt;/span&gt;
-&lt;span class="nv"&gt;$&lt;/span&gt; &lt;span class="nv"&gt;mv&lt;/span&gt; &lt;span class="n"&gt;File&lt;/span&gt; &lt;span class="n"&gt;file&lt;/span&gt;
-&lt;span class="nv"&gt;$&lt;/span&gt; &lt;span class="nv"&gt;ls&lt;/span&gt;
-&lt;span class="n"&gt;file&lt;/span&gt;
-&lt;span class="nv"&gt;$&lt;/span&gt; &lt;span class="nv"&gt;git&lt;/span&gt; &lt;span class="n"&gt;status&lt;/span&gt;
-&lt;span class="c1"&gt;# On branch master&lt;/span&gt;
-&lt;span class="n"&gt;nothing&lt;/span&gt; &lt;span class="n"&gt;to&lt;/span&gt; &lt;span class="n"&gt;commit&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;working&lt;/span&gt; &lt;span class="n"&gt;directory&lt;/span&gt; &lt;span class="n"&gt;clean&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Huh? Turns out, git doesn't notice the change. Ok, let's try moving back, and explicitly telling git what we want:&lt;/p&gt;
-&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$&lt;/span&gt; &lt;span class="nv"&gt;mv&lt;/span&gt; &lt;span class="n"&gt;file&lt;/span&gt; &lt;span class="n"&gt;File&lt;/span&gt;
-&lt;span class="nv"&gt;$&lt;/span&gt; &lt;span class="nv"&gt;git&lt;/span&gt; &lt;span class="n"&gt;mv&lt;/span&gt; &lt;span class="n"&gt;File&lt;/span&gt; &lt;span class="n"&gt;file&lt;/span&gt;
-&lt;span class="n"&gt;fatal:&lt;/span&gt; &lt;span class="n"&gt;destination&lt;/span&gt; &lt;span class="nb"&gt;exists&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;source&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;File&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;destination&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;file&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;No joy. In fact, the best i could come up with is the rather awkward:&lt;/p&gt;
-&lt;div class="codehilite"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$&lt;/span&gt; &lt;span class="nv"&gt;git&lt;/span&gt; &lt;span class="n"&gt;mv&lt;/span&gt; &lt;span class="n"&gt;File&lt;/span&gt; &lt;span class="n"&gt;File&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;tmp&lt;/span&gt;
-&lt;span class="nv"&gt;$&lt;/span&gt; &lt;span class="nv"&gt;git&lt;/span&gt; &lt;span class="n"&gt;mv&lt;/span&gt; &lt;span class="n"&gt;File&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;tmp&lt;/span&gt; &lt;span class="n"&gt;file&lt;/span&gt;
-&lt;span class="nv"&gt;$&lt;/span&gt; &lt;span class="nv"&gt;ls&lt;/span&gt;
-&lt;span class="n"&gt;file&lt;/span&gt;
-&lt;span class="nv"&gt;$&lt;/span&gt; &lt;span class="nv"&gt;git&lt;/span&gt; &lt;span class="n"&gt;status&lt;/span&gt;
-&lt;span class="c1"&gt;# On branch master&lt;/span&gt;
-&lt;span class="c1"&gt;# Changes to be committed:&lt;/span&gt;
-&lt;span class="c1"&gt;#   (use &amp;quot;git reset HEAD &amp;lt;file&amp;gt;...&amp;quot; to unstage)&lt;/span&gt;
-&lt;span class="c1"&gt;#&lt;/span&gt;
-&lt;span class="c1"&gt;#       renamed:    File -&amp;gt; file&lt;/span&gt;
-&lt;span class="c1"&gt;#&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Finally, git's doing what I want. A slightly silly dance required, but at least it works. Better ideas on how to do this are most welcome.&lt;/p&gt;</summary><category term="git"></category><category term="osx"></category></entry><entry><title>Remove "tweet" from os x context menu</title><link href="http://davidszotten.github.com/remove-tweet-from-os-x-context-menu.html" rel="alternate"></link><updated>2012-03-04T00:00:00+00:00</updated><author><name>David Szotten</name></author><id>http://davidszotten.github.com/remove-tweet-from-os-x-context-menu.html</id><summary type="html">&lt;p&gt;I rarely (read: never) want to tweet when I right click to bring up a context menu. Actually, most of the time, I'm just looking for "Inspect Element" in Chrome. I was happily surprised to find I could remove the option entirely:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Open System Preferences&lt;/li&gt;
-&lt;li&gt;Choose "Keyboard"&lt;/li&gt;
-&lt;li&gt;Choose the "Keyboard Shortcuts" tab&lt;/li&gt;
-&lt;li&gt;Find "Services" in the menu&lt;/li&gt;
-&lt;li&gt;Untick "Tweet" (I also found a few others to untick)&lt;/li&gt;
-&lt;li&gt;Profit&lt;/li&gt;
-&lt;/ol&gt;</summary><category term="osx"></category></entry><entry><title>Show number of queries in runserver output</title><link href="http://davidszotten.github.com/show-number-of-queries-in-runserver-output.html" rel="alternate"></link><updated>2012-03-03T00:00:00+00:00</updated><author><name>David Szotten</name></author><id>http://davidszotten.github.com/show-number-of-queries-in-runserver-output.html</id><summary type="html">&lt;p&gt;Sometimes I'd like to know how many database queries were used to generate a particular view, but can't be bothered with the full weight of the (otherwise excellent) &lt;a href="http://pypi.python.org/pypi/django-debug-toolbar"&gt;django-debug-toolbar&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Is this a stupid idea? Do let me know. Any other thoughts/comments also welome.&lt;/p&gt;</summary><category term="django"></category><category term="python"></category></entry><entry><title>Show number of queries in runserver output</title><link href="http://davidszotten.github.com/show-number-of-queries-in-runserver-output.html" rel="alternate"></link><updated>2012-03-03T00:00:00+00:00</updated><author><name>David Szotten</name></author><id>http://davidszotten.github.com/show-number-of-queries-in-runserver-output.html</id><summary type="html">&lt;p&gt;Sometimes I'd like to know how many database queries were used to generate a particular view, but can't be bothered with the full weight of the (otherwise excellent) &lt;a href="http://pypi.python.org/pypi/django-debug-toolbar"&gt;django-debug-toolbar&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;The toolbar does a lot of logging and slows down rendering. Also, by default I want &lt;code&gt;'INTERCEPT_REDIRECTS': False&lt;/code&gt;, but then I don't see the queries used in the form processing (only what was used to render the page redirected to).&lt;/p&gt;
 &lt;p&gt;So instead I wrote a small piece of middleware that just outputs the query count as part of the runserver console output:&lt;/p&gt;
 &lt;pre&gt;
@@ -330,4 +262,4 @@
             &lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;stderr&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;output&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
         &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;response&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;</summary><category term="django"></category><category term="python"></category></entry><entry><title>Time to start blogging?</title><link href="http://davidszotten.github.com/time-to-start-blogging.html" rel="alternate"></link><updated>2012-03-03T00:00:00+00:00</updated><author><name>David Szotten</name></author><id>http://davidszotten.github.com/time-to-start-blogging.html</id><summary type="html">&lt;p&gt;Have been thinking about starting to blog for a while. I think the vague plan is to write about code. Mostly notes-to-self a la "How did I get that thing to work again?", but if any of this could be useful to others, all the better. We'll see where this takes me&lt;/p&gt;</summary></entry></feed>
+&lt;/pre&gt;&lt;/div&gt;</summary><category term="django"></category><category term="python"></category></entry></feed>
